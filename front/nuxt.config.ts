@@ -13,6 +13,7 @@ export default defineNuxtConfig({
     '@unocss/nuxt',
     '@nuxt/image',
     '@nuxtjs/i18n',
+    '@pinia/nuxt',
   ],
   experimental: {
     inlineSSRStyles: false,

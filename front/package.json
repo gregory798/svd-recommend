@@ -12,7 +12,9 @@
     "typecheck": "vue-tsc --noEmit"
   },
   "dependencies": {
+    "@pinia/nuxt": "^0.5.1",
     "@vueuse/nuxt": "^10.7.1",
+    "pinia": "^2.1.7",
     "vue-router-better-scroller": "^0.0.0"
   },
   "devDependencies": {

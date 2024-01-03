@@ -28,64 +28,41 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-// ... other imports as needed
+import { useUserStore } from '@/stores/user'
 
-const input = ref(localStorage.getItem('inputAlgo') || '')
+const userStore = useUserStore()
+const input = ref(userStore.algorithm) // Initialize input with algorithm from the store
 const error = ref<unknown>()
 const results = ref<any[]>([])
 
-
-watch(input, () => {
-    // Save the current input (algorithm) to local storage
-    localStorage.setItem('inputAlgo', input.value);
-
-    // Fetch the user ID from local storage
-    const userId = localStorage.getItem('inputID') || '';
-
-    // Call fetchResults with both user ID and algorithm
-    fetchResults(userId, input.value);
-
-    // Log combined inputs
-    logCombinedInputs();
-});
-
-
-
 async function fetchResults(userId: string, algo: string) {
     try {
-        // Construct the URL with query parameters
         const url = `http://127.0.0.1:8000/recommend?algorithm_name=${algo}&user_id=${userId}`;
-
-        // Make the API call
         const response = await fetch(url);
-
-        // Check if the response is OK (status code 200-299)
         if (!response.ok) {
             throw new Error('Network response was not ok ' + response.statusText);
         }
-
-        // Parse the JSON response
         const data = await response.json();
-
-        // Check if the data is an array and update 'results'
+        console.log(data);
         if (Array.isArray(data)) {
             results.value = data;
         } else {
-            results.value = []; // Set to empty array if data is not an array
+            results.value = [];
         }
     } catch (e) {
-        // Handle errors, such as network issues
-        console.error('Error fetching results:', e);
+        // console.error('Error fetching results:', e);
         error.value = e;
-        results.value = []; // Reset results to empty array on error
+        results.value = [];
     }
 }
 
-
-function logCombinedInputs() {
-    const inputID = localStorage.getItem('inputID') || ''
-    console.log(`InputID = ${inputID} + InputAlgo = ${input.value}`)
-}
+watch(input, (newInput) => {
+    userStore.setAlgorithm(newInput)
+    // Assume userId is managed in another component and accessed here
+    const userId = userStore.userId
+    fetchResults(userId, newInput)
+    // console.log(`InputID = ${userId} + InputAlgo = ${newInput}`)
+})
 </script>
 
 <style scoped>

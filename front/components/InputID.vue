@@ -28,75 +28,42 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-// ... other imports as needed
+import { useUserStore } from '@/stores/user'
 
-// const input = ref('')
-// const error = ref<unknown>()
-// const results = ref<any[]>([])
-
-
-const input = ref(localStorage.getItem('inputID') || '')
+const userStore = useUserStore()
+const input = ref(userStore.userId) // Initialize input with userId from the store
 const error = ref<unknown>()
 const results = ref<any[]>([])
-
-// // Function to call your API
-// async function fetchResults(query: string) {
-//     try {
-//         const response = await fetch(`http://127.0.0.1:8000?query=${query}`);
-//         const data = await response.json();
-//         console.log(data)
-//         results.value = data;  // Assuming the API returns an array
-//     } catch (e) {
-//         error.value = e;
-//     }
-// }
 
 // Function to call your API
 async function fetchResults(userId: string, algo: string) {
     try {
         const response = await fetch(`http://127.0.0.1:8000/recommend?algorithm_name=${algo}&user_id=${userId}`);
-
-        // Check if the response is OK
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-
         const data = await response.json();
         console.log(data);
-
         if (Array.isArray(data)) {
             results.value = data;
-            console.log('API Response:', data); // Log the result here
         } else {
-            results.value = []; // Set to empty array if data is not an array
+            results.value = [];
         }
     } catch (e) {
-        console.error('Error fetching results:', e);
+        // console.error('Error fetching results:', e);
         error.value = e;
-        results.value = []; // Reset results to empty array on error
+        results.value = [];
     }
 }
 
-
-// // Watch for changes in input and call fetchResults
-// watch(input, () => {
-//     fetchResults(input.value);
-// });
-
-const inputAlgo = localStorage.getItem('inputAlgo') || ''
-
-// Watch for changes in inputID
-watch(input, () => {
-    localStorage.setItem('inputID', input.value)
-    fetchResults(input.value, inputAlgo)
-    logCombinedInputs()
+// Watch for changes in input and update the store, also call fetchResults
+watch(input, (newInput) => {
+    userStore.setUserId(newInput)
+    // Assume inputAlgo is managed similarly in another component and accessed here
+    const inputAlgo = userStore.algorithm
+    fetchResults(newInput, inputAlgo)
+    // console.log(`InputID = ${newInput} + InputAlgo = ${inputAlgo}`)
 })
-
-function logCombinedInputs() {
-    const inputAlgo = localStorage.getItem('inputAlgo') || ''
-    console.log(`InputID = ${input.value} + InputAlgo = ${inputAlgo}`)
-}
-
 </script>
 
 <style scoped>
