@@ -56,5 +56,9 @@
   "Search result for: {currentSearch}": "Search result for: {currentSearch}",
 
   "Error occurred on fetching": "Error occurred on fetching",
-  "Retry": "Retry"
+  "Retry": "Retry", 
+  
+  "Enter your user id ...": "Enter your user id ...",
+  "Enter an algorithm : svd, nn": "Enter an algorithm : svd, nn",
+  "Recommended Movies": "Recommended Movies"
 }

@@ -1,7 +1,7 @@
 import type { QueryItem } from '~/types'
 
 export const QUERY_LIST = {
-    recommendation: <QueryItem[]>([
+  recommendation: <QueryItem[]>([
     { type: 'movie', title: 'Recommended Movies', query: 'popular' },
   ]),
   movie: <QueryItem[]>([

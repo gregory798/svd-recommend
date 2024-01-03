@@ -53,6 +53,7 @@ useHead({
     <NavBar lg:order-first />
     <IframeModal />
     <PhotoModal />
+    <router-link to="/MovieRecommendations" class="login-button">Show recommended movie</router-link>
   </div>
 </template>
 

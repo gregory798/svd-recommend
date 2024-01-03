@@ -1,6 +1,5 @@
 import process from 'node:process'
-import Router from 'vue-router';
-import DashboardPage from './pages/DashboardPage.vue'; // Update the path accordingly
+import { resolve } from 'path'
 
 const isDev = process.env.NODE_ENV === 'development'
 
@@ -95,16 +94,14 @@ export default defineNuxtConfig({
     defaultLocale: 'en',
   },
   router: {
-    middleware: 'loginRedirect',
     extendRoutes(routes, resolve) {
       routes.push({
-        name: 'dashboard',
-        path: '/dashboard',
-        component: resolve(__dirname, 'pages/dashboard.vue'), // Path to your DashboardPage.vue file
+        name: 'MovieRecommendations',
+        path: '/MovieRecommendations',
+        component: resolve(__dirname, 'pages/MovieRecommendations.vue')
       });
-    },
+    }
   },
-
   // Add a custom layout or navigation with the login link
   layout: {
     // You can define your layout configuration here
