@@ -57,11 +57,13 @@ async function fetchResults(userId: string, algo: string) {
 
         // Make the fetch request
         // const response = await fetch(`http://127.0.0.1:8000/recommend?algorithm_name=${algo}&user_id=${userId}`); --> local
-        const response = await fetch(`http://100.26.162.40/recommend?algorithm_name=${algo}&user_id=${userId}`); //--> online
+        const response = await fetch(`http://100.26.162.40/recommend?algorithm_name=als&user_id=${userId}`); //--> online
+        console.log(response)
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
+        // console.log(data)
 
         // Process the response
         if (data && data['Top 10 Recommendations']) {
