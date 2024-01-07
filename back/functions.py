@@ -1,3 +1,5 @@
+"""
+
 import pandas as pd
 import numpy as np
 import requests
@@ -56,6 +58,63 @@ def svd(user_id):
 
         recommendations = recommend_svd(df, user_id)
         return {"Top 10 Recommendations": recommendations.tolist()}
+
+    except requests.exceptions.HTTPError as http_err:
+        return {"Error": f"HTTP error occurred: {http_err}"}
+    except requests.exceptions.RequestException as e:
+        return {"Error": f"Error occurred: {e}"}
+    except ValueError as e:
+        return {"Error": str(e)}
+"""
+
+import pandas as pd
+import numpy as np
+import requests
+from io import StringIO
+import pickle
+
+def prepare_dataframe(df):
+    df_cleaned = df.apply(pd.to_numeric, errors='coerce').fillna(0)
+    return df_cleaned
+
+def cosine_similarity(v, u):
+    return np.dot(v, u) / (np.linalg.norm(v) * np.linalg.norm(u))
+
+def recommend_svd(df, movie_metadata, user_id):
+    user_id = int(user_id)
+    if user_id not in df.index:
+        raise ValueError(f"User ID {user_id} not found in the DataFrame.")
+
+    U, S, VT = np.linalg.svd(df.values, full_matrices=False)
+    user_index = df.index.get_loc(user_id)
+    user_row = df.iloc[user_index].values
+    similarities = np.array([cosine_similarity(user_row, VT[:, i])
+                            for i in range(VT.shape[1])])
+    sorted_movie_indices = np.argsort(-similarities)
+    unwatched_movies = [
+        i for i in sorted_movie_indices if df.iloc[user_index, i] == 0]
+    top_10_recommendations = [movie_metadata[df.columns[i]]['title'] for i in unwatched_movies][:10]
+
+    return top_10_recommendations
+
+def svd(user_id):
+    df_url = 'https://s3.eu-west-3.amazonaws.com/dauphine.projet/df.csv'
+    metadata_url = 'https://s3.eu-west-3.amazonaws.com/dauphine.projet/movie_metadata.pkl'
+
+    try:
+        # Load and prepare the user-movie interaction data
+        df_response = requests.get(df_url)
+        df_response.raise_for_status()
+        df = pd.read_csv(StringIO(df_response.text), index_col='user_id')
+        df = prepare_dataframe(df)
+
+        # Load the movie metadata
+        metadata_response = requests.get(metadata_url)
+        metadata_response.raise_for_status()
+        movie_metadata = pickle.loads(metadata_response.content)
+
+        recommendations = recommend_svd(df, movie_metadata, user_id)
+        return {"Top 10 Recommendations": recommendations}
 
     except requests.exceptions.HTTPError as http_err:
         return {"Error": f"HTTP error occurred: {http_err}"}

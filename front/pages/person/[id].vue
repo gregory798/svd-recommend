@@ -16,6 +16,6 @@ useHead({
 <template>
   <div>
     <PersonDetails :item="person" />
-    <TheFooter />
+    <!-- <TheFooter /> -->
   </div>
 </template>

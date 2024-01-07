@@ -6,6 +6,8 @@ const route = useRoute()
 
 const isRootPath = computed(() => route.path === '/')
 
+
+
 useHead({
   htmlAttrs: {
     lang: 'en',
@@ -42,9 +44,14 @@ useHead({
     <div id="app-scroller" of-x-hidden of-y-auto relative>
       <!-- <router-link to="/login" class="login-button ">Login</router-link> -->
       <!-- Chatgpt : Cette div doit être visible uniquement lorsque path=/root -->
+      
       <div v-if="isRootPath" class="divided-x">
-        <InputID/>
-        <InputAlgo/>
+        
+   
+          <InputID/>
+          <!-- <InputAlgo/> -->
+
+
       </div>
 
       <NuxtPage />
@@ -53,7 +60,7 @@ useHead({
     <NavBar lg:order-first />
     <IframeModal />
     <PhotoModal />
-    <router-link to="/MovieRecommendations" class="login-button">Show recommended movie</router-link>
+    <!-- <router-link to="/MovieRecommendations" class="login-button">Show recommended movie</router-link> -->
   </div>
 </template>
 

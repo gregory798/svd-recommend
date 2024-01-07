@@ -34,11 +34,11 @@ defineProps<{
     <div mt-2>
       {{ item.title || item.name }}
     </div>
-    <div flex text-sm gap-2 items-center>
+    <!-- <div flex text-sm gap-2 items-center>
       <StarsRate w-20 :value="item.vote_average" />
       <div op60>
         {{ formatVote(item.vote_average) }}
       </div>
-    </div>
+    </div> -->
   </NuxtLink>
 </template>

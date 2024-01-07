@@ -3,7 +3,7 @@
         <div flex bg-gray:10 items-center px6 py4 gap3 sticky>
             <div i-ph:magnifying-glass text-xl op50 />
             <input v-model="input" type="text" text-2xl bg-transparent outline-none w-full
-                :placeholder="$t('Enter your user id ...')">
+                :placeholder="$t('Enter your user id')">
         </div>
 
         <!-- Display results -->
@@ -35,31 +35,83 @@ const input = ref(userStore.userId) // Initialize input with userId from the sto
 const error = ref<unknown>()
 const results = ref<any[]>([])
 
-// Function to call your API
+import { useLoading } from '@/composables/useLoading'
+const { isLoading, startLoading, finishLoading } = useLoading();
+import { useMovieStore } from '~/stores/useMovieStore';
+const movieStore = useMovieStore();
+
 async function fetchResults(userId: string, algo: string) {
     try {
-        const response = await fetch(`http://127.0.0.1:8000/recommend?algorithm_name=${algo}&user_id=${userId}`);
+        // Trim the userId to remove leading/trailing whitespace
+        const trimmedUserId = userId.trim();
+
+        // Check if the trimmed userId is empty
+        if (!trimmedUserId) {
+            // If userId is empty or only contains whitespace, set the movie list to empty and return
+            movieStore.setMovies([]);
+            return;
+        }
+
+        // Start the loading indicator
+        startLoading();
+
+        // Make the fetch request
+        const response = await fetch(`http://127.0.0.1:8000/recommend?algorithm_name=svd&user_id=${trimmedUserId}`);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        console.log(data);
-        if (Array.isArray(data)) {
-            results.value = data;
+
+        // Process the response
+        if (data && data['Top 10 Recommendations']) {
+            movieStore.setMovies(data['Top 10 Recommendations']);
         } else {
-            results.value = [];
+            movieStore.setMovies([]);
         }
     } catch (e) {
-        // console.error('Error fetching results:', e);
         error.value = e;
         results.value = [];
+        movieStore.setMovies([]);
+        // alert("Please verify your user id or algorithm: " + e);
+    } finally {
+        // Finish the loading indicator in both success and error cases
+        finishLoading();
     }
 }
+
+
+
+import { listMedia, searchShows, getMedia } from '../composables/tmdb';
+import type { Media } from '../types';
+
+/**
+ * Given a movie title, retrieves detailed information about the movie.
+ * @param title The title of the movie.
+ * @returns Promise containing movie details.
+ */
+async function getMovieInfoByTitle(title: string): Promise<Media | null> {
+    // Search for the movie
+    const searchResults = await searchShows(title);
+    const movies = searchResults.results.filter((result) => result.media_type === 'movie');
+
+    // Check if any movies were found
+    if (movies.length === 0) {
+        return null; // No movies found
+    }
+
+    // Assuming the first result is the desired movie
+    const movieId = movies[0].id;
+
+    // Get detailed information about the movie
+    const movieDetails = await getMedia('movie', movieId);
+    return movieDetails;
+}
+
+
 
 // Watch for changes in input and update the store, also call fetchResults
 watch(input, (newInput) => {
     userStore.setUserId(newInput)
-    // Assume inputAlgo is managed similarly in another component and accessed here
     const inputAlgo = userStore.algorithm
     fetchResults(newInput, inputAlgo)
     // console.log(`InputID = ${newInput} + InputAlgo = ${inputAlgo}`)

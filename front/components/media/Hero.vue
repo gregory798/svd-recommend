@@ -48,15 +48,15 @@ const mounted = useMounted()
             {{ props.item.title || props.item.name }}
           </h1>
           <div flex="~ row wrap" gap2 items-center mt4>
-            <StarsRate w-25 :value="props.item.vote_average" />
+            <!-- <StarsRate w-25 :value="props.item.vote_average" />
             <div class="op50 hidden md:block">
               {{ formatVote(props.item.vote_average) }}
             </div>
             <span class="op50 hidden md:block">·</span>
             <div class="op50 hidden md:block">
               {{ $t('{numberOfReviews} Reviews', { numberOfReviews: formatVote(props.item.vote_count) }) }}
-            </div>
-            <span op50>·</span>
+            </div> -->
+            <!-- <span op50>·</span> -->
             <div v-if="props.item.release_date" op50>
               {{ props.item.release_date.slice(0, 4) }}
             </div>

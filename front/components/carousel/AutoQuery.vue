@@ -10,9 +10,9 @@ const item = await listMedia(props.query.type, props.query.query, 1)
 
 <template>
   <CarouselBase>
-    <template #title>
-      {{ $t(query.title) }}
-    </template>
+      <template #title>
+        {{ $t(query.title) }}
+      </template>
     <template #more>
       <NuxtLink :to="`/${props.query.type}/category/${props.query.query}`" n-link>
         {{ $t('Explore more') }}
