@@ -56,7 +56,7 @@ async function fetchResults(userId: string, algo: string) {
         startLoading();
 
         // Make the fetch request
-        const response = await fetch(`http://127.0.0.1:8000/recommend?algorithm_name=svd&user_id=${trimmedUserId}`);
+        const response = await fetch(`http://127.0.0.1:8000/recommend?algorithm_name=als&user_id=${trimmedUserId}`);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }

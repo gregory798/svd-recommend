@@ -24,8 +24,8 @@ def read_root():
 @app.get("/recommend")
 def recommend(algorithm_name: str, user_id: str):
     try:
-        if algorithm_name == "svd":
-            return func.svd(user_id)
+        if algorithm_name == "als":
+            return func.als(user_id)
     except Exception as e:
         return {"Error" : str(e)}
 

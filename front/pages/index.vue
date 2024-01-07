@@ -44,7 +44,7 @@ import type { Media } from '../types';
 import { useMovieStore } from '~/stores/useMovieStore';
 const movieStore = useMovieStore();
 
-var x = 0;
+// console.log(movieStore.dauphine);
 
 /**
  * Given a movie title, retrieves detailed information about the movie.
@@ -69,6 +69,7 @@ async function getMovieInfoByTitle(title: string): Promise<Media | null> {
   return movieDetails;
 }
 const moviesInfo = ref<(Media | null)[]>([]);
+const dauphineMoviesInfo = ref<(Media | null)[]>([]);
 
 
 // Computed property to reactively update movie details when store changes
@@ -81,6 +82,15 @@ watchEffect(async () => {
   moviesInfo.value = details.filter(detail => detail !== null);
   // console.log("moviesInfo")
   // console.log(moviesInfo)
+});
+
+watchEffect(async () => {
+  // startLoading();
+  const details = await Promise.all(
+    movieStore.dauphine.map(title => getMovieInfoByTitle(title))
+  );
+  dauphineMoviesInfo.value = details.filter(detail => detail !== null);
+  // finishLoading();
 });
 
 
@@ -150,11 +160,20 @@ const { isLoading, startLoading, finishLoading } = useLoading();
           <!-- <p>Exemples of algorithm : svd, mlp</p> -->
         </div>
       </div>
-    <CarouselAutoQuery
+
+      <div flex py3 px10 items-center mt5 v-if="dauphineMoviesInfo.length > 0" style="margin-bottom: -2%;">
+        <div text-2xl>
+          Other Movies
+        </div>
+      </div>
+      <div v-if="dauphineMoviesInfo.length > 0" class="dauphine-carousel">
+        <CarouselItems :items="dauphineMoviesInfo" :type="type" />
+      </div>
+    <!-- <CarouselAutoQuery
       v-for="query of queries"
       :key="query.type + query.query"
       :query="query"
-    />
+    /> -->
     <!-- <TheFooter /> -->
   </div>
 </template>
