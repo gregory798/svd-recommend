@@ -1,10 +1,5 @@
-1 - Installer FastAPI
-```
-pip install fastapi
-```
+# Movies recommender system using SVD, MLP etc.
 
-2 - Lancer l'app
-(se mettre dans le dossier back)
-```
-python main.py
-```
+![image](https://github.com/gregory798/svd-recommend/assets/73400124/2ed00cd1-827b-4bbf-88d7-f00a4bb266ee)
+
+Application : http://52.90.64.156/
